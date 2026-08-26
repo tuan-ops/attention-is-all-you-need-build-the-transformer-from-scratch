@@ -201,8 +201,13 @@ def softmax_attention_weights(masked_scores):
     masked_scores = torch.where(masked_scores != -torch.inf, torch.exp(masked_scores)/ torch.sum(torch.exp(masked_scores), axis = -1, keepdims = True),0)
     return masked_scores
 
-# Step 21 - apply_attention_weights_to_values (not yet solved)
-# TODO: implement
+# Step 21 - apply_attention_weights_to_values
+import torch
+
+def apply_attention_weights_to_values(attention_weights, value):
+    """Multiply attention weights by the value matrix to produce context vectors."""
+    # TODO: combine attention weights (..., Lq, Lk) with value (..., Lk, d_v)
+    return torch.matmul(attention_weights, value)
 
 # Step 22 - scaled_dot_product_attention (not yet solved)
 # TODO: implement
