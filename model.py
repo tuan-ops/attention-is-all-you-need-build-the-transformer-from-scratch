@@ -255,8 +255,13 @@ def apply_linear_projection(x, weight, bias):
     # TODO: return x @ weight^T + bias (bias may be None) with shape (..., out_features)
     return x @ (weight.T) + bias if bias != None else x @ (weight.T)
 
-# Step 27 - project_to_query_key_value (not yet solved)
-# TODO: implement
+# Step 27 - project_to_query_key_value
+def project_to_query_key_value(x, w_q, b_q, w_k, b_k, w_v, b_v):
+    # TODO: project x into separate query, key, and value tensors via three linear layers
+    q = x @ (w_q.T) + b_q if b_q != None else x @ (w_q.T)
+    k = x @ (w_k.T) + b_k if b_k != None else x @ (w_k.T)
+    v = x @ (w_v.T) + b_v if b_v != None else x @ (w_v.T)
+    return (q, k, v)
 
 # Step 28 - split_qkv_into_heads (not yet solved)
 # TODO: implement
