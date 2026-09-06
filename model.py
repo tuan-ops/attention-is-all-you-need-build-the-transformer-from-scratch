@@ -268,11 +268,13 @@ import torch
 
 def split_qkv_into_heads(q, k, v, num_heads):
     # TODO: split each of q, k, v into (B, num_heads, L, d_k) and return as a tuple
-    B, L, d_model = q.shape
+    B, Lq, d_model = q.shape
+    _, Lk, _ = k.shape
+    _, Lv, _ = v.shape
     d_k = d_model //  num_heads
-    q = q.view(B, L, num_heads, d_k).permute(0, 2, 1 ,3)
-    k = k.view(B, L, num_heads, d_k).permute(0, 2, 1 ,3)
-    v = v.view(B, L, num_heads, d_k).permute(0, 2, 1 ,3)
+    q = q.view(B, Lq, num_heads, d_k).permute(0, 2, 1 ,3)
+    k = k.view(B, Lk, num_heads, d_k).permute(0, 2, 1 ,3)
+    v = v.view(B, Lv, num_heads, d_k).permute(0, 2, 1 ,3)
     return (q, k, v)
 
 # Step 29 - multi_head_scaled_dot_product_attention
@@ -292,8 +294,17 @@ def merge_heads_and_project_output(context, w_o, b_o):
     output = apply_linear_projection(merge, w_o, b_o)
     return output
 
-# Step 31 - assemble_multi_head_attention_forward (not yet solved)
-# TODO: implement
+# Step 31 - assemble_multi_head_attention_forward
+def assemble_multi_head_attention_forward(query, key, value, w_q, w_k, w_v, w_o, num_heads, mask=None):
+    # TODO: project Q/K/V, split into heads, run scaled dot-product attention, merge heads, output projection.
+    project_q = apply_linear_projection(query, w_q, bias = None)
+    project_k = apply_linear_projection(key, w_k, bias = None)
+    project_v = apply_linear_projection(value, w_v, bias = None)
+
+    q_h, k_h, v_h = split_qkv_into_heads(project_q, project_k, project_v, num_heads)
+    context, weight = multi_head_scaled_dot_product_attention(q_h, k_h, v_h, mask=mask)
+    output = merge_heads_and_project_output(context, w_o, b_o = None)
+    return output
 
 # Step 32 - apply_ffn_first_linear_and_relu (not yet solved)
 # TODO: implement
