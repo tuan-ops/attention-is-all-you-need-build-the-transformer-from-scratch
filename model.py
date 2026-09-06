@@ -263,8 +263,17 @@ def project_to_query_key_value(x, w_q, b_q, w_k, b_k, w_v, b_v):
     v = x @ (w_v.T) + b_v if b_v != None else x @ (w_v.T)
     return (q, k, v)
 
-# Step 28 - split_qkv_into_heads (not yet solved)
-# TODO: implement
+# Step 28 - split_qkv_into_heads
+import torch
+
+def split_qkv_into_heads(q, k, v, num_heads):
+    # TODO: split each of q, k, v into (B, num_heads, L, d_k) and return as a tuple
+    B, L, d_model = q.shape
+    d_k = d_model //  num_heads
+    q = q.view(B, L, num_heads, d_k).permute(0, 2, 1 ,3)
+    k = k.view(B, L, num_heads, d_k).permute(0, 2, 1 ,3)
+    v = v.view(B, L, num_heads, d_k).permute(0, 2, 1 ,3)
+    return (q, k, v)
 
 # Step 29 - multi_head_scaled_dot_product_attention (not yet solved)
 # TODO: implement
